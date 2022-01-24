@@ -28,9 +28,12 @@ aspect/source/mesh_deformation/fastscape.cc
 aspect/source/mesh_deformation/fastscape.h
 aspect/Named_VTK.f90
 
-The model surface is handled by the coupling with FASTSCAPE accessible at the following link and described in 
-Neuharth, D., Brune, S., Glerum, A. C., Morley, C. K., Yuan, X., & Braun, J. (2021). Flexural strike-slip basins.
-and available at the following link. We advise a person that want to take advantage of this coupling with the most recent feature from ASPECT to contact us. 
+The surface mesh deformation is handled by the coupling with the Landscape Evolution Model FASTSCAPE thats is accessible at the following link. 
+
+https://github.com/fastscape-lem/fastscape
+
+The coupling is described in Neuharth, D., Brune, S., Glerum, A. C., Morley, C. K., Yuan, X., & Braun, J. (2021). Flexural strike-slip basins. 
+We advise a person that want to take advantage of this coupling with the most recent feature from ASPECT to contact us. 
 
 
 Information relevant to achieve same results.
