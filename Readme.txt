@@ -24,6 +24,7 @@ aspect/source/postprocess/subduction_velocity.cc
 aspect/source/postprocess/underthrusting.cc
 aspect/source/postprocess/sinking_vel_depth.cc
 aspect/source/mesh_refinement/subduction.cc
+aspect/source/mesh_refinement/strain_rate_abs.cc
 aspect/source/mesh_deformation/fastscape.cc
 aspect/source/mesh_deformation/fastscape.h
 aspect/Named_VTK.f90
