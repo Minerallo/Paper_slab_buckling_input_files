@@ -7,7 +7,8 @@ The adress of the ASPECT branch is  https://github.com/Minerallo/aspect/tree/Pap
 
 The branch is derived from ASPECT version 2.3.0-pre lastly rebased the 02/09/2021. 
 
-Modifications where done to the following files : 
+#########  Modifications where done to the following files : 
+
 aspect/material_model/equation_of_state/multicomponent_incompressible.cc
 aspect/material_model/equation_of_state/multicomponent_incompressible.h
 aspect/source/material_model/utilities.cc
@@ -29,18 +30,22 @@ aspect/source/mesh_deformation/fastscape.cc
 aspect/source/mesh_deformation/fastscape.h
 aspect/Named_VTK.f90
 
-The surface mesh deformation is handled by the coupling with the Landscape Evolution Model FASTSCAPE thats is accessible at the following link. 
+#########  Fastscape 
 
-https://github.com/fastscape-lem/fastscape
+The surface mesh deformation is handled by the coupling with the Landscape Evolution Model FASTSCAPE (fortran) cloned from the master branch  at commit 18f25888b16bf4cf23b00e79840bebed8b72d303 accessible at the following link. 
+
+https://github.com/fastscape-lem/fastscapelib-fortran
 
 The coupling is described in Neuharth, D., Brune, S., Glerum, A. C., Morley, C. K., Yuan, X., & Braun, J. (2021). Flexural strike-slip basins. 
 We advise a person that want to take advantage of this coupling with the most recent feature from ASPECT to contact us. 
 
+To install aspect with fastscape
+make sure than Named_VTK.f90 is similar to our branch and placed to the aspect repository
+cmake -DFASTSCAPE_DIR=/repository/of_the/fastscape_build -DCMAKE_BUILD_TYPE=repository/of/aspect
+then   make 
 
 
-
-
-Information relevant to achieve same results:
+########   Additional informations and packages relevant to achieve same results:
 
 
 -- This is ASPECT, the Advanced Solver for Problems in Earth's ConvecTion.
@@ -52,7 +57,16 @@ Information relevant to achieve same results:
 --     . running in OPTIMIZED mode
 --     . running with 96 MPI processes
 
-With this set up for the reference model this give the following statistics at the end of the simulation with a total of 15036 timesteps.
+Before installing make sure to install these packages. The installation these packages can be done using "candi" at accessible on github 
+https://github.com/dealii/candi/tree/dealii-9.2
+then use the following command ./candi.sh --packages="p4est trilinos dealii" -j ncores
+make sure than p4est trilinos are installed before dealii
+
+
+#########  Statistics
+
+With this set up for the reference model you should get the folowing statistic the following statistics at the end of the simulation with a total of 15036 timesteps.
+(The HLRN had a wall time of 12 hours so the model was restarted every 12 hours until reaching 40 My of evolution)
 
 Number of active cells: 53,247 (on 6 levels)
 Number of degrees of freedom: 3,621,137 (445,644+55,985+222,822+222,822+222,822+222,822+222,822+222,822+222,822+222,822+222,822+222,822+222,822+222,822+222,822+222,822)
