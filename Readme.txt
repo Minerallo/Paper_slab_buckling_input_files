@@ -1,5 +1,6 @@
  
-This repository gives the necessary instruction to run the models from the Pons et al., 2022  "Central Andes formation controlled by trench migration and slab buckling". Nature communication
+This repository gives the necessary instruction to run the models from the Pons et al., 2022  "Tench migration and slab buckling control the formation of the Central Andes". Nature communications
+co-author :  Stephan Sobolev, Sibiao Liu , Derek Neuharth
 
 The repository includes the parameter files (*.prm) ran with the ASPECT code that are necessary to reproduce the results of the paper as well as the initial temperature and composition files.
 
@@ -32,7 +33,7 @@ aspect/Named_VTK.f90
 
 #########  Fastscape 
 
-The surface mesh deformation is handled by the coupling with the Landscape Evolution Model FASTSCAPE (fortran) cloned from the master branch  at commit 18f25888b16bf4cf23b00e79840bebed8b72d303 accessible at the following link. 
+The surface mesh deformation is handled by the coupling with the Landscape Evolution Model FASTSCAPE (fortran) cloned from the master branch at commit 18f25888b16bf4cf23b00e79840bebed8b72d303 accessible at the following link. 
 
 https://github.com/fastscape-lem/fastscapelib-fortran
 
@@ -62,10 +63,21 @@ https://github.com/dealii/candi/tree/dealii-9.2
 then use the following command ./candi.sh --packages="p4est trilinos dealii" -j ncores
 make sure than p4est trilinos are installed before dealii
 
+#########  Models Parameter files
+The repository contains the following parameter files :
+.Initialzation
+.S1  - Reference model (Friction 0.05)
+.S2a - Subduction interface friction 0.015
+.S2b - Subduction interface friction 0.035
+.S2c - Subduction interface friction 0.06
+.S3  - No eclogitization of the lower crust
+.S4  - High thermal conduction of the upper crust
 
+The model needs to be run first with the initalization file before restarting with the other parameter files. 
+In order to initialize the model you need to indicate the adress in the parameter files of the initial compositional and themal files that are in the directory "Initial_composition_and_temperature"
 #########  Statistics
 
-With this set up for the reference model you should get the folowing statistic the following statistics at the end of the simulation with a total of 15036 timesteps.
+With this set up for the reference model (S1) you should get the folowing statistic the following statistics at the end of the simulation with a total of 15036 timesteps.
 (The HLRN had a wall time of 12 hours so the model was restarted every 12 hours until reaching 40 My of evolution)
 
 Number of active cells: 53,247 (on 6 levels)
