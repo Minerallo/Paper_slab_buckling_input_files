@@ -1,6 +1,10 @@
  
-This repository gives the necessary instruction to run the models from the Pons et al., 2022  "Tench migration and slab buckling control the formation of the Central Andes". Nature communications
+This repository gives the necessary instruction to run the models from the Pons et al., 2022  "Tench migration and slab buckling control the formation of the Central Andes". Submitted to Nature communications
 co-author :  Stephan Sobolev, Sibiao Liu , Derek Neuharth
+
+This work is licenced with CC Attribution 4.0 (CC BY 4.0)
+In case of the use of these files, please cite. 
+Pons, Michaël; Sobolev, Stephan; Liu, Sibiao; Neuharth, Derek (2022): 2D geodynamic subduction model of the Central Andes. GFZ Data Services. https://doi.org/10.5880/GFZ.2.5.2022.001
 
 The repository includes the parameter files (*.prm) ran with the ASPECT code that are necessary to reproduce the results of the paper as well as the initial temperature and composition files.
 
