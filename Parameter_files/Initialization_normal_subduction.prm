@@ -1,0 +1,446 @@
+set Output directory                       = Initialization_normal_subduction
+set Use years in output instead of seconds = true
+set Start time                             = 0
+set CFL number				   = 0.5
+set Maximum time step			   = 50000
+#Solver parameters
+set Nonlinear solver scheme                = single Advection, iterated Stokes
+set Nonlinear solver tolerance             = 1e-4
+set Max nonlinear iterations               = 40
+set Max nonlinear iterations in pre-refinement = 5 
+set Pressure normalization                 = no
+set Surface pressure                       = 0
+
+
+subsection Geometry model
+set Model name = box with lithosphere boundary indicators
+subsection Box with lithosphere boundary indicators
+set Lithospheric thickness = 96000
+set X extent = 2592000
+set Y extent = 900000
+set Y repetitions lithosphere = 3
+set X repetitions = 81
+set Y repetitions = 25
+end
+end
+
+set Resume computation = auto
+subsection Checkpointing
+set Steps between checkpoint = 10
+end
+
+subsection Termination criteria
+set Checkpoint on termination = true
+set Termination criteria = user request
+subsection User request
+set File name = terminate-aspect
+end
+end
+
+subsection Solver parameters
+subsection Stokes solver parameters
+set Number of cheap Stokes solver steps = 200
+end
+end
+
+subsection Gravity model
+set Model name = ascii data
+subsection Ascii data model
+set Data file name = prem.txt
+end
+end
+
+
+
+subsection Mesh refinement
+set Run postprocessors on initial refinement = true
+set Strategy                           = subduction,strain_rate_cut,minimum refinement function
+set Initial adaptive refinement        = 5
+set Initial global refinement          = 0
+set Time steps between mesh refinement = 2
+set Refinement fraction                = 0.99
+set Coarsening fraction                = 0.01
+set Minimum refinement level           = 0
+subsection Subduction
+
+set Apply refinements if on top of = 160000
+set Refine weak zone 2 if under = 890000
+set Refine weak zone 2 if on top of = 780000
+set Refine weak zone 1 if on top of = 800000
+set Refine ridge 2 if under = 890000
+set Refine ridge 2 if on top of = 800000
+set Refine weak zone 1 if on top of = 780000
+set Refine continental domain if x inferior at = 2200000
+set Refine oceanic domain if x superior at = 400000
+set Refine continental mantle if on top of = 700000
+set Additional craton refinement = false
+
+
+set Sediments refinement = 4,2
+set Upper Crust refinement = 5,2
+set Upper Crust 2 refinement = 5,2    
+set Lower Crust refinement = 6,2
+set Lower Crust 2 refinement = 6,2
+set Continental Mantle refinement = 7,1
+set Craton refinement = 8,1
+# No ridge so we assign oceanic crust refinement
+set Ridge refinement = 3,4
+set Ridge 2 refinement = 3,4
+set Weak Zone refinement = 3,4
+set Weak Zone 2 refinement = 3,4
+set Oceanic Crust refinement = 1,4
+set Oceanic Mantle refinement = 2,3
+# And no plateau so we assign Oceanic mantle refinement
+set Harzburgite Mantle refinement = 2,3
+set Herzolite Mantle refinement = 2,3
+set Upper Mantle refinement = 0,0
+set Mantle refinement = 0,0
+
+end
+subsection Strain rate cut
+set Start refine with strain rate = 500
+set Refine strain superior = true
+set Strain rate threshold = 3e-14
+
+set Strain rate minimum refinement level = 4
+
+set Interval min=850000
+set Interval max=895000
+end 
+subsection Minimum refinement function
+set Coordinate system = cartesian
+set Variable names = x,y
+set Function expression = ((y>=900e3-5e3) ? 3 : 0)         
+end        
+end
+
+
+subsection Mesh deformation
+set Mesh deformation boundary indicators = top : fastscape
+set Additional tangential mesh velocity boundary indicators = right lithosphere, left lithosphere,left,right
+subsection Free surface 
+set Surface velocity projection = vertical
+set Free surface stabilization theta = 1
+end
+subsection Fastscape
+subsection Boundary conditions
+set Bottom = 1
+set Right = 1
+set Top = 1
+set Left = 1
+end    
+set Use velocities = true
+set Use center slice for 2d = false
+set Vertical exaggeration = 4
+set Number of steps = 10
+set Maximum timestep = 50000
+set Fastscape seed = 0
+set Use center slice for 2d = false
+set Surface resolution = 4
+set Resolution difference = 1
+set Additional fastscape refinement = 0
+set Use box with lithosphere 2d = true
+set Diffuse specific area = false
+subsection Box with lithosphere 2d
+set X extent in 2d = 2592000
+set Y extent in 2d = 100000
+set X repetitions in 2d = 81
+set Y repetitions in 2d = 35
+end                
+subsection Erosional parameters
+set Drainage area exponent = 0
+set Bedrock diffusivity = 1e-6
+set Multi-direction slope exponent = 0
+set Bedrock river incision rate = 0
+set Sediment river incision rate = 0
+set Slope exponent = 1
+set Bedrock deposition coefficient = 0
+end
+end
+end
+
+subsection Boundary composition model
+set Fixed composition boundary indicators   = left, right,left lithosphere, right lithosphere,bottom
+set List of model names = initial composition
+end
+
+subsection Boundary traction model
+set Prescribed traction boundary indicators = left x:initial lithostatic pressure
+subsection Initial lithostatic pressure
+set Number of integration points = 1800
+set Representative point = 150000, 900000
+end
+end
+
+subsection Boundary velocity model
+set Prescribed velocity boundary indicators = left lithosphere x:function,right lithosphere x:function,right x:function,bottom :function
+subsection Function
+set Variable names      = x,y,t
+set Function constants  = cm=0.01,year=1,hdepth=900e3,xhalf=1300e3,velNAZCA=7,velSA40=-2.07,velSA35=-2.18,velSA25=-2.12,velSA5=-2.81,velSA0=-3,dlithoce=85e3,dcraton=145e3,extrapush=0,tiso=100e3,t40=1e6,t35=5e6,t25=15e6,t5=35e6,t0=40e6,velSAave=-2
+set Function expression = if(t<=tiso && x<=xhalf && y>=hdepth-dlithoce,7*cm/year,if(t<=tiso && x>xhalf && y>=hdepth-dcraton-extrapush,-0.00001*cm/year,if(t>tiso && t<=60e6 && x<=xhalf && y>=hdepth-dlithoce ,velNAZCA*cm/year, \
+if(t>tiso && x>xhalf && y>=hdepth-dcraton,velSAave*cm/year,if(t>tiso && x>xhalf && y<hdepth-dcraton && y>=hdepth-dcraton*2,velSAave*cm/year+(((hdepth-dcraton)-y)*abs(velSAave*cm/year)/dcraton),0))))) ;0
+end
+end
+
+subsection Compositional fields
+set Number of fields = 10
+set Names of fields = UPM,Oceanic_crust,Oceanic_mantle,Weak_Zone,Sediments,Upper_Crust,Lower_Crust,Continental_mantle,Craton,plastic_strain
+end
+
+subsection Initial temperature model
+set List of model names = ascii data, adiabatic
+set List of model operators = add, minimum
+subsection Ascii data model
+set Data directory       = /link/to/your/directory/
+set Data file name       = Temperature_normal_subduction.txt
+end
+subsection Adiabatic
+subsection Function
+set Variable names = t
+set Function expression = if(t>=2400,1,0);if(t>=2400,1,0);if(t>=2400,1,0);if(t>=2400,1,0);if(t>=2400,1,0);if(t>=2400,1,0);if(t>=2400,1,0);if(t>=2400,1,0);if(t>=2400,1,0);if(t>=2400,1,0);
+end
+set Age top boundary layer        = 0
+set Age bottom boundary layer     = 0
+end
+end
+
+subsection Adiabatic conditions model
+set Model name = compute profile
+end
+
+subsection Boundary temperature model
+set Fixed temperature boundary indicators   = top,bottom,left lithosphere,left,right,right lithosphere
+set List of model names = initial temperature
+end
+
+
+set Adiabatic surface temperature = 1600
+
+subsection Heating model
+set List of model names = compositional heating,shear heating, adiabatic heating
+subsection Compositional heating
+set Compositional heating values = 0,0,0.2e-6,0,0.2e-6,1.3e-6,1.3e-6,0.2e-6,0,0,0
+end
+end
+
+
+subsection Initial composition model
+set Model name = ascii data
+subsection Ascii data model
+set Data directory       = /scratch/usr/bbkponsm/model/
+set Data file name       = Composition_normal_subduction.txt
+end
+end
+
+
+subsection Material model
+set Material averaging = harmonic average
+set Model name = ascii reference profile
+set Model name = visco plastic
+subsection Visco Plastic
+#Visco Plastic
+set Minimum viscosity             = 1e20
+set Switch minimum viscosity      = true
+set Time minimum viscosity switch = 100000
+set Minimum viscosity second      = 4e19
+set Time minimum viscosity switch second = 100000
+set Minimum viscosity third      = 4e19    
+set Maximum viscosity     = 1e24
+set Reference strain rate = 1e-15 
+set Minimum strain rate   = 1e-20
+
+set Use compressible density only=true
+
+
+set Reference temperatures =  background:293 ,UPM:293 ,Oceanic_crust:293 ,Oceanic_mantle:293 ,Weak_Zone:293 ,Sediments:293 ,Upper_Crust:293 ,Lower_Crust:293 ,Continental_mantle:293 ,Craton:293  ,plastic_strain:293
+set Isothermal bulk modulus pressure derivatives = background:4 ,UPM:4 ,Oceanic_crust:4 ,Oceanic_mantle:4 ,Weak_Zone:4 ,Sediments:4 ,Upper_Crust:4 ,Lower_Crust:4 ,Continental_mantle:4 ,Craton:4 ,plastic_strain:4
+
+#depth(km)                 0|   45-60|     100|     270|     410|     520|     660
+set Reference isothermal compressibilities = \
+background:          5.e-12                                                ,\
+UPM:                                            7.8e-12|  5.e-12|4.20e-12|  3.3e-12 ,\
+Oceanic_crust:       7.8e-12| 7.8e-12         | 7.8e-12|  5.e-12|4.20e-12|  3.3e-12 ,\
+Oceanic_mantle:                                 7.8e-12|  5.e-12|4.20e-12|  3.3e-12 ,\
+Weak_Zone:           7.8e-12| 7.8e-12| 7.8e-12| 7.8e-12|  5.e-12|4.20e-12|  3.3e-12 ,\
+Sediments:           7.8e-12                                               ,\
+Upper_Crust:         7.8e-12                                               ,\
+Lower_Crust:         7.8e-12|7.8e-12          | 7.8e-12|  5.e-12|4.20e-12|  3.3e-12 ,\
+Continental_mantle:                             7.8e-12|  5.e-12|4.20e-12|  3.3e-12 ,\
+Craton:                                         7.8e-12|  5.e-12|4.20e-12|  3.3e-12 ,\
+plastic_strain:      5.e-12
+
+
+set Viscosity averaging scheme = harmonic
+set Viscous flow law           = composite
+
+set Thermal diffusivities      = 8.3333e-07,8.3333e-07,8.3333e-07, 8.3333e-07,8.3333e-07,7.8027e-07 ,7.4405e-07,6.9444e-07,8.3841e-07,8.3841e-07,8.3841e-07
+
+
+set Heat capacities            = background:1200 ,UPM:1200 ,Oceanic_crust:1200 ,Oceanic_mantle:1200 ,Weak_Zone:1200 ,Sediments:1200 ,Upper_Crust:1200 ,Lower_Crust:1200 ,Continental_mantle:1200 ,Craton:1200 ,plastic_strain:1200
+set Thermal expansivities      = background:3e-5 ,UPM:3e-5|2.45e-5|1.93e-5|2.34e-5 ,Oceanic_crust:3e-5 ,Oceanic_mantle:3e-5|2.45e-5|1.93e-5|2.34e-5 ,Weak_Zone:3e-5 ,Sediments:3.7e-5 ,Upper_Crust:3.7e-5 ,Lower_Crust:2.7e-5 ,Continental_mantle:3e-5 ,Craton:3e-5 ,plastic_strain:3e-5
+
+set Define transition by depth instead of pressure = false    
+
+#depth(km)                             45|     100|     200|     410|    520|     660
+set Phase transition pressures = \  
+UPM:                                                          13.5e9|18e9|    22.77e9   ,\
+Oceanic_crust:                    1.942e9|              9e9|  13.5e9|18e9|    22.77e9   ,\ 
+Oceanic_mantle:                                               13.5e9|18e9|    22.77e9   ,\
+Weak_Zone:                        1.942e9|    5e9|      9e9|  13.5e9|18e9|    22.77e9   ,\
+Lower_Crust:                      1.225e9|              9e9|  13.5e9|18e9|    22.77e9   ,\
+Continental_mantle:                                           13.5e9|18e9|    22.77e9   ,\
+Craton:                                                       13.5e9|18e9|    22.77e9   
+
+#depth(km)                             45|     100|     200|     410|     520|     660
+set Phase transition pressure widths = \
+UPM:                                                          0.08e9|    0.8e9|   0.16e9                  ,\
+Oceanic_crust:                     0.66e9|                0|  0.16e9|    0.16e9|   0.16e9                  ,\
+Oceanic_mantle:                                               0.41e9|    0.8e9|   0.16e9                  ,\
+Weak_Zone:                         0.66e9|       0|       0|  0.16e9|    0.8e9|   0.16e9                  ,\
+Lower_Crust:                       0.66e9|                0|  0.16e9|    0.16e9|   0.16e9                  ,\
+Continental_mantle:                                           0.41e9|    0.8e9|   0.16e9                  ,\
+Craton:                                                       0.41e9|    0.8e9|   0.16e9                        
+
+#depth(km)          0km |  45| 100| 270| 410| 520|660
+set Densities = \
+background:         3300                                       ,\
+UPM:                3300               |3612|3760|4171              ,\
+Oceanic_crust:      3300|3300|     3300|3612|3760|4171              ,\
+Oceanic_mantle:     3300               |3612|3760|4171              ,\
+Weak_Zone:          3000|3300|3300|3300|3612|3760|4171              ,\
+Sediments:          2600                                      ,\
+Upper_Crust:        2800                                       ,\
+Lower_Crust:        3000|3450|     3500|3662|3810|4371              ,\
+Continental_mantle: 3280               |3592|3740|4151              ,\
+Craton:             3240               |3592|3740|4151              ,\                    
+plastic_strain:     3300
+
+
+#depth(km)          0km |  45| 100| 270| 410| 520|660
+set Phase transition temperatures = \
+UPM:                                 1810|1870|1940             ,\
+Oceanic_crust:     1073.15|     1760|1810|1870|1940             ,\
+Oceanic_mantle:                      1810|1870|1940             ,\
+Weak_Zone:         1073.15|1760|1760|1810|1870|1940            ,\
+Lower_Crust:        973.15|     1760|1810|1870|1940             ,\
+Continental_mantle:                  1810|1870|1940             ,\
+Craton:                              1810|1870|1940             
+
+#depth(km)          0km |  45| 100| 270| 410| 520|660
+set Phase transition Clapeyron slopes = \
+UPM:                                2.e6|3.5e6|-0.5e6           ,\
+Oceanic_crust:       1.e6|     3.e6|2.e6|3.5e6|-0.5e6           ,\
+Oceanic_mantle:                     2.e6|3.5e6|-0.5e6           ,\
+Weak_Zone:           1.e6|0.5e6|3.e6|2.e6|3.5e6|-0.5e6          ,\
+Lower_Crust:         1.e6|     3.e6|2.e6|3.5e6|-0.5e6           ,\
+Continental_mantle:                 2.e6|3.5e6|-0.5e6           ,\
+Craton:                             2.e6|3.5e6|-0.5e6           
+
+#depth(km)          0km |  45| 100| 270| 410| 520|660
+set Blocking temperatures = \
+UPM:                                 273|273|273             ,\
+Oceanic_crust:     273|          273|273|273|273             ,\
+Oceanic_mantle:                      273|273|273             ,\
+Weak_Zone:             273|  273|273|273|273|273            ,\
+Lower_Crust:           273|      273|273|273|273             ,\
+Continental_mantle:                  273|273|273             ,\
+Craton:                              273|273|273             
+
+
+#composition:                                   Back                 ,Asthenosphere                          ,OC                        ,OM                           ,WZ                                                                    ,Sed                  ,UC                     ,LC                     ,CM                            ,Crat              ,PS           
+set Grain size                                = 1e-3
+set Prefactors for diffusion creep            = background:1e-9       ,UPM:1e-9|7.3955e-22|4.6663e-22|0.0668e-21 ,Oceanic_crust:2.25e-15        ,Oceanic_mantle:2.25e-15      ,Weak_Zone:1.6667e-20   ,Sediments:1e-39      ,Upper_Crust:1e-39      ,Lower_Crust:1e-39      ,Continental_mantle:1e-9      ,Craton:2.25e-15  ,plastic_strain:1e-9
+set Grain size exponents for diffusion creep  = background:0          ,UPM:0|0|0|0                           ,Oceanic_crust:3           ,Oceanic_mantle:3             ,Weak_Zone:0           ,Sediments:0          ,Upper_Crust:0          ,Lower_Crust:0          ,Continental_mantle:0         ,Craton:3         ,plastic_strain:0           
+set Activation energies for diffusion creep   = background:335e3      ,UPM:335e3|0|0|0                  ,Oceanic_crust:375e3       ,Oceanic_mantle:375e3         ,Weak_Zone:0            ,Sediments:335e3      ,Upper_Crust:335e3      ,Lower_Crust:335e3      ,Continental_mantle:335e3     ,Craton:375e3  ,plastic_strain:335e3          
+set Activation volumes for diffusion creep    = background:4.8e-6     ,UPM:4.8e-6|0|0|0                 ,Oceanic_crust:10e-6        ,Oceanic_mantle:10e-6         ,Weak_Zone:0            ,Sediments:4e-6       ,Upper_Crust:4e-6       ,Lower_Crust:4e-6       ,Continental_mantle:4.8e-6    ,Craton:10e-6    ,plastic_strain:4.8e-6            
+
+set Prefactors for dislocation creep          = background:2.3041e-14 ,UPM:8.499e-15|1.00e-39|1.00e-39|1.00e-39       ,Oceanic_crust:2.9682e-16  ,Oceanic_mantle:2.9682e-16    ,Weak_Zone:1e-39        ,Sediments:8.57e-28 ,Upper_Crust:8.57e-28 ,Lower_Crust:7.13e-18 ,Continental_mantle:2.9682e-14 ,Craton:2.9682e-16,plastic_strain:2.3041e-14    
+set Stress exponents for dislocation creep    = background:3.5        ,UPM:3.5|3.5|3.5|3.5                   ,Oceanic_crust:3.5            ,Oceanic_mantle:3.5           ,Weak_Zone:4            ,Sediments:4          ,Upper_Crust:4          ,Lower_Crust:3          ,Continental_mantle:3.5        ,Craton:3.5     ,plastic_strain:3.5         
+set Activation energies for dislocation creep = background:480000     ,UPM:540.e3|530.e3|530.e3|530.e3       ,Oceanic_crust:535000      ,Oceanic_mantle:535000        ,Weak_Zone:223000       ,Sediments:223000     ,Upper_Crust:223000     ,Lower_Crust:345000     ,Continental_mantle:515000     ,Craton:535000   ,plastic_strain:480.e3         
+set Activation volumes for dislocation creep  = background:14e-6      ,UPM:12e-6|0|0|0                       ,Oceanic_crust:14e-06        ,Oceanic_mantle:14e-06        ,Weak_Zone:12e-6        ,Sediments:0          ,Upper_Crust:0          ,Lower_Crust:0          ,Continental_mantle:14e-06     ,Craton:14e-06   ,plastic_strain:14e-6          
+
+
+
+#No softening applied during the initialization, we only want to have deformation during the free subduction step
+#set Strain weakening mechanism = plastic weakening with plastic strain only
+# Plasticity parameters
+
+#                                  Back     ,UPM        ,OC        ,OM       ,WZ       ,Sed      ,UC         ,LC        ,CM        ,Crat     ,PS    
+set Angles of internal friction  = 40        ,30         ,30        ,0       ,30       ,30       ,30         ,30        ,30        ,30       ,30     
+set Cohesions                    = 4.00e+07  ,4.00e+07   ,4.00e+07  ,500e6   ,4e7      ,4.00e+7  ,4.00e+7    ,4.00e+7   ,4.00e+7   ,4.00e+7  ,4e7   
+
+
+end
+end  
+
+subsection Postprocess
+set List of postprocessors = composition depth, velocity statistics, temperature statistics,visualization,mass flux statistics, composition statistics,topography,depth average,subduction velocity, heat flux statistics,Composition extent,Composition difference,topolayer
+subsection Subduction Velocity
+set Mean velocity area in x = 1e3
+set Mean velocity area in y = 1e3
+end
+subsection Extent composition
+set Composition tracked for extent = 5
+set Output extent dependant ending file = false
+end
+subsection Difference composition
+set Composition one tracked for difference =5
+set Composition two tracked for difference = 8
+set Composition 2 maximum depth =400000
+set Output composition difference dependant ending file = false
+end
+subsection Composition Depth
+set Composition tracked number = 2
+set Output depth dependant ending file = true
+set Ending depth criterion = 3e5
+end    
+subsection Topography
+set Output to file = true
+set Time between text output = 20000
+end
+subsection Topolayer
+set Output to file = true
+set Time between text output = 20000
+set Composition tracked= 1
+end
+subsection Visualization
+set List of output variables = density, viscosity, strain rate, error indicator,shear stress, stress,strain rate tensor,named additional outputs,heat flux map,adiabat,nonadiabatic pressure,thermal conductivity
+set Point-wise stress and strain = true
+set Output format = vtu 
+set Interpolate output = true
+set Time between graphical output = 20000
+set Number of grouped files = 1
+subsection Heat flux map
+set Output point wise heat flux = true
+end
+end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,5 +1,5 @@
  
-This repository gives the necessary instruction to run the models from the Pons et al., 2022  "Tench migration and slab buckling control the formation of the Central Andes". Submitted to Nature communications
+This repository gives the necessary instruction to run the models from the Pons et al., 2022  "Hindered tench migration due to slab steepening controls the formation of the Central Andes". 
 co-author :  Stephan Sobolev, Sibiao Liu , Derek Neuharth
 
 This work is licenced with CC Attribution 4.0 (CC BY 4.0)
@@ -8,11 +8,11 @@ Pons, Michaël; Sobolev, Stephan; Liu, Sibiao; Neuharth, Derek (2022): 2D geodyn
 
 The repository includes the parameter files (*.prm) ran with the ASPECT code that are necessary to reproduce the results of the paper as well as the initial temperature and composition files.
 
-The adress of the ASPECT branch is  https://github.com/Minerallo/aspect/tree/Paper_slab_buckling_Andes
+The address of the ASPECT branch is  https://github.com/Minerallo/aspect/tree/Paper_slab_buckling_Andes
 
 The branch is derived from ASPECT version 2.3.0-pre lastly rebased the 02/09/2021. 
 
-#########  Modifications where done to the following files : 
+#########  Modifications were made to the following files : 
 
 aspect/material_model/equation_of_state/multicomponent_incompressible.cc
 aspect/material_model/equation_of_state/multicomponent_incompressible.h
@@ -21,7 +21,7 @@ aspect/source/material_model/utilities.h
 aspect/source/material_model/visco_plastic.cc
 aspect/source/material_model/visco_plastic.h
 
-Additionally we implemented few custom plugins required for the model set up, the extraction of the data and the postprocessing:
+Additionally, we implemented few custom plugins required for the model set up, the extraction of the data and the post processing:
 aspect/source/postprocess/trench.cc (depracted)
 aspect/source/postprocess/topolayer.cc
 aspect/source/postprocess/composition_depth.cc
@@ -42,7 +42,7 @@ The surface mesh deformation is handled by the coupling with the Landscape Evolu
 https://github.com/fastscape-lem/fastscapelib-fortran
 
 The coupling is described in Neuharth, D., Brune, S., Glerum, A. C., Morley, C. K., Yuan, X., & Braun, J. (2021). Flexural strike-slip basins. 
-We advise a person that want to take advantage of this coupling with the most recent feature from ASPECT to contact us. 
+We advise a person that wants to take advantage of this coupling with the most recent feature from ASPECT to contact us. 
 
 To install aspect with fastscape
 make sure than Named_VTK.f90 is similar to our branch and placed to the aspect repository
@@ -62,26 +62,32 @@ then   make
 --     . running in OPTIMIZED mode
 --     . running with 96 MPI processes
 
-Before installing make sure to install these packages. The installation these packages can be done using "candi" at accessible on github 
+Before installing, make sure to install these packages. The installation these packages can be done using "candi" at accessible on github 
 https://github.com/dealii/candi/tree/dealii-9.2
 then use the following command ./candi.sh --packages="p4est trilinos dealii" -j ncores
 make sure than p4est trilinos are installed before dealii
 
 #########  Models Parameter files
 The repository contains the following parameter files :
-.Initialzation
-.S1  - Reference model (Friction 0.05)
-.S2a - Subduction interface friction 0.015
-.S2b - Subduction interface friction 0.035
-.S2c - Subduction interface friction 0.06
-.S3  - No eclogitization of the lower crust
-.S4  - High thermal conduction of the upper crust
+.Initialization_flat_subduction
+.M1  - Reference model (Friction 0.05)
+.M2a - Subduction interface friction 0.015
+.M2b - Subduction interface friction 0.035
+.M2c - Subduction interface friction 0.06
+.M3  - No eclogitization of the lower crust
+.M4  - High thermal conduction of the upper crust
+.M5a - Foreland sediements internal friction angle 10°
+.M5b - Foreland sediements internal friction angle 30°
+.M6a - Overriding plate velocity 1 cm/yr
+.M6b - Overriding plate velocity 4 cm/yr
+.Initialization_normal_sunduction
+.M7  - Model without flat subduction
 
-The model needs to be run first with the initalization file before restarting with the other parameter files. 
-In order to initialize the model you need to indicate the adress in the parameter files of the initial compositional and themal files that are in the directory "Initial_composition_and_temperature"
+The model needs to be run first with the initialization file before restarting with the other parameter files. 
+In order to initialize the model you need to indicate the address in the parameter files of the initial compositional and themal files that are in the directory "Initial_composition_and_temperature"
 #########  Statistics
 
-With this set up for the reference model (S1) you should get the folowing statistic the following statistics at the end of the simulation with a total of 15036 timesteps.
+With this set up in the reference model (M1) you should get the following statistic the following statistics at the end of the simulation with a total of 15036 timesteps.
 (The HLRN had a wall time of 12 hours so the model was restarted every 12 hours until reaching 40 My of evolution)
 
 Number of active cells: 53,247 (on 6 levels)
